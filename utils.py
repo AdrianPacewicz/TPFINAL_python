@@ -117,15 +117,30 @@ def visualizarResumen():
     
 def visualizarGrafico(ticker):
     conn = sqlite3.connect("TPFINAL.db")
-    df2 = pd.read_sql_query('''SELECT date(fecha/1000,'unixepoch') as Fecha, close, high, low, number, open, volumen, volumen_weighted 
-                            FROM precios p 
+    df2 = pd.read_sql_query('''SELECT date(fecha/1000,'unixepoch') as Fecha, close, high, low, number, open, volumen, volumen_weighted
+                            FROM precios p
                             INNER JOIN ticker t ON p.ticker_id = t.ticker_id
                             where t.ticker = ?''', conn,params=[ticker])
-    x = df2["Fecha"]
-    y = df2["close"]
+    x1 = df2["Fecha"]
+    y1 = df2["close"]
+ 
+    x2 = df2["Fecha"]
+    y2 = df2["high"]
+   
+    x3 = df2["Fecha"]
+    y3 = df2["low"]
+   
+    x4 = df2["Fecha"]
+    y4 = df2["open"]
+ 
     print(df2)
+    fig, ax = plt.subplots()
     plt.figure()
-    plt.plot(x,y)
+    ax.plot(x1, y1, marker = "o", label = "close")
+    ax.plot(x2, y2, marker = "o", label = "high")
+    ax.plot(x3, y3, marker = "o", label = "low")
+    ax.plot(x4, y4, marker = "o", label = "open")
+    ax.legend()
     plt.show()
     
     
