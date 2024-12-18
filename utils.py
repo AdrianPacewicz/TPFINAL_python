@@ -1,5 +1,5 @@
-import sqlite3
-import requests
+import sqlite3, requests
+import matplotlib.pyplot as plt, pandas as pd, numpy as np
 from datetime import datetime, timedelta
 
 def crearBD(): 
@@ -33,8 +33,7 @@ def crearBD():
         FOREIGN KEY(ticker_id) REFERENCES ticker(ticker_id)
     );
     ''')
-    conn.commit()
-    
+    conn.commit()    
     
 def consultarRangos(ticker,fecha_desde,fecha_hasta):
     conn = sqlite3.connect("TPFINAL.db")
@@ -109,3 +108,24 @@ def insertardatos(diccionario, fecha_desde, fecha_hasta):
             VALUES ({id}, '{item["t"]}', '{item["c"]}', '{item["h"]}', '{item["l"]}', '{item["n"]}', '{item["o"]}', '{item["v"]}', '{item["vw"]}');
             ''')
         conn.commit()
+        
+def visualizarResumen():
+    conn = sqlite3.connect("TPFINAL.db")
+    df = pd.read_sql_query("SELECT ticker, fecha_desde, fecha_hasta FROM ticker order by ticker asc, fecha_desde asc", conn)
+    print("Los tickers guardados en la base de datos son:\n")
+    print(df)
+    
+def visualizarGrafico(ticker):
+    conn = sqlite3.connect("TPFINAL.db")
+    df2 = pd.read_sql_query('''SELECT date(fecha/1000,'unixepoch') as Fecha, close, high, low, number, open, volumen, volumen_weighted 
+                            FROM precios p 
+                            INNER JOIN ticker t ON p.ticker_id = t.ticker_id
+                            where t.ticker = ?''', conn,params=[ticker])
+    x = df2["Fecha"]
+    y = df2["close"]
+    print(df2)
+    plt.figure()
+    plt.plot(x,y)
+    plt.show()
+    
+    
