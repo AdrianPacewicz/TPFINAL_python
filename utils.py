@@ -121,17 +121,34 @@ def visualizarGrafico(ticker):
                             FROM precios p
                             INNER JOIN ticker t ON p.ticker_id = t.ticker_id
                             where t.ticker = ?''', conn,params=[ticker])
-    x1 = df2["Fecha"]
-    y1 = df2["close"]
+    
+
+    cursor = conn.cursor()
+    res = cursor.execute(f''' select MIN(fecha_desde), MAX(fecha_hasta)
+                         from ticker 
+                         where ticker = ? ''',[ticker])
+
+    for row in res:
+        fecha_A = row[0]
+        fecha_B = row[1]
+        C = (datetime.strptime(fecha_B,"%Y-%m-%d") - datetime.strptime(fecha_A,"%Y-%m-%d")).days
+        fechas = pd.date_range(fecha_A, periods=C+1)
+        df = pd.DataFrame(fechas, columns=['Fecha'], index=fechas)
+    
+    df2['Fecha'] = pd.to_datetime(df2['Fecha'])
+    df_joined = df.join(df2.set_index('Fecha'), on='Fecha')
+   
+    x1 = df_joined["Fecha"]
+    y1 = df_joined["close"]
  
-    x2 = df2["Fecha"]
-    y2 = df2["high"]
+    x2 = df_joined["Fecha"]
+    y2 = df_joined["high"]
    
-    x3 = df2["Fecha"]
-    y3 = df2["low"]
+    x3 = df_joined["Fecha"]
+    y3 = df_joined["low"]
    
-    x4 = df2["Fecha"]
-    y4 = df2["open"]
+    x4 = df_joined["Fecha"]
+    y4 = df_joined["open"]
  
     fig, ax = plt.subplots()
     ax.plot(x1, y1, marker = "o", label = "close")
@@ -140,3 +157,36 @@ def visualizarGrafico(ticker):
     ax.plot(x4, y4, marker = "o", label = "open")
     ax.legend()
     plt.show()
+    
+def validarFechas(fecha_desde,fecha_hasta):
+    try:
+        desde = datetime.strptime(fecha_desde,"%Y-%m-%d")
+        hasta = datetime.strptime(fecha_hasta,"%Y-%m-%d")
+        if (desde > hasta):
+            print(".\n.\n.\n")
+            print("Las fechas que ingresaste son incorrectas")
+            return False
+        else:
+            return True
+    except:
+        print(".\n.\n.\n")
+        print("Los valores ingresados como fechas, no son correctos")
+        return False
+    
+def validarTicker(ticker):
+    conn = sqlite3.connect("TPFINAL.db")
+    cursor = conn.cursor()
+    res = cursor.execute(f''' select COUNT(*) AS CANTIDAD 
+                         from ticker 
+                         where ticker = ? ;
+                        ''',[ticker])
+    for row in res:
+        if (row[0] == 0):
+            print(".\n.\n.\n")
+            print("No hay registros para el ticker seleccionado")
+            return False
+        else:
+            return True
+    
+    
+    
