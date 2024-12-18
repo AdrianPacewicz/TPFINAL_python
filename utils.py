@@ -133,14 +133,10 @@ def visualizarGrafico(ticker):
     x4 = df2["Fecha"]
     y4 = df2["open"]
  
-    print(df2)
     fig, ax = plt.subplots()
-    plt.figure()
     ax.plot(x1, y1, marker = "o", label = "close")
     ax.plot(x2, y2, marker = "o", label = "high")
     ax.plot(x3, y3, marker = "o", label = "low")
     ax.plot(x4, y4, marker = "o", label = "open")
     ax.legend()
     plt.show()
-    
-    
