@@ -1,7 +1,5 @@
-import requests
-import sqlite3
-import pandas
-import os
+import requests, sqlite3, os
+import matplotlib.pyplot as plt, pandas as pd, numpy as np
 from datetime import datetime, timedelta
 from utils import *
 
@@ -23,6 +21,7 @@ if (opcion == "1"):
     fecha_hasta = input("Ingrese la fecha hasta que desea visualizar los datos(yyyy-mm-dd): ")
     fechas_faltantes = consultarRangos(ticker,fecha_desde,fecha_hasta)
     rangos_para_api = agrupar_fechas(fechas_faltantes)
+    print(f"Se guardaran los siguientes periodos para el ticker {ticker}:")
     for inicio,fin in rangos_para_api:
         print(f'{inicio.strftime("%Y-%m-%d")} - {fin.strftime("%Y-%m-%d")}')
         fecha_inicio = inicio.strftime("%Y-%m-%d")
@@ -31,4 +30,16 @@ if (opcion == "1"):
         datos = consultar_api(ticker,fecha_inicio,fecha_fin,key)
         insertardatos(datos,fecha_inicio,fecha_fin)
     print("Datos insertados correctamente")
-        
+elif (opcion == "2"):
+    print("Opción 1: Resumen de datos guardados")
+    print("Opción 2: Visualización de gráficos") 
+    opcion2 = input("Ingrese la opción que desea visualizar: ")
+    if (opcion2 == "1"):
+        visualizarResumen()
+    elif (opcion2 == "2"):
+        ticker = input("Ingrese el ticker que desea visualizar: ")
+        visualizarGrafico(ticker)   
+    else:
+        print("Opcion Incorrecta")
+else:
+    print("Opcion Incorrecta")
