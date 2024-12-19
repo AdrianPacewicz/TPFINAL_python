@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Clase App
 class App:
-    # Comentarios
+    # Constructor
     def __init__(self):
         self.db = BaseDeDatos()
         self.validar_credentials()

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt, pandas as pd, os
 
 # Clase Menu
 class Menu:
+    # Constructor
     def __init__(self, app):
         self.app = app
     
