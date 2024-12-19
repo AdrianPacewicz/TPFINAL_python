@@ -22,7 +22,7 @@ class BaseDeDatos:
         if self.conexion:
             self.conexion.close()
     
-    # Crear las tablas en caso de que no existan
+    # Método que crea las tablas en caso de que no existan
     def crear_tablas(self):
         self.cursor.execute(f'''
             CREATE TABLE IF NOT EXISTS ticker (
@@ -50,7 +50,7 @@ class BaseDeDatos:
         ''')
         self.conexion.commit()
 
-    # Consultar las fechas sin info para un ticker dentro de un rango
+    # Método que consultar las fechas sin info para un ticker dentro de un rango determinado y devuelve una lista de las mismas
     def consultar_fechas_faltantes(self,ticker,fecha_desde,fecha_hasta):
         self.cursor.execute(f'''
             SELECT 
