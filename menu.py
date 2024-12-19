@@ -59,9 +59,10 @@ class Menu:
         elif (opcion == "2"):
             self.clear()
             ticker = input("Ingrese el ticker que desea visualizar: ")
+            opcion3 = input("\n1- Gráfico Comparativo \n2- Gráfico de Barras \nIngrese el tipo de gráfico que sea visualizar: ")
             if(self.app.validarTicker(ticker)):
                 df = self.app.visualizar_grafico(ticker)
-                self.graficar(df)
+                self.graficar(df,opcion3)
                 os.system("pause")
             else:
                 print(".\n.\n.\nNo hay registros para el ticker seleccionado")
@@ -73,7 +74,7 @@ class Menu:
             print("Opcion Incorrecta")
             os.system("pause")
 
-    def graficar(self, df):
+    def graficar(self, df, opcion):
         x1 = df["fecha"]
         y1 = df["close"]
     
@@ -85,14 +86,32 @@ class Menu:
     
         x4 = df["fecha"]
         y4 = df["open"]
-    
-        fig, ax = plt.subplots()
-        ax.plot(x1, y1, marker = "o", label = "close")
-        ax.plot(x2, y2, marker = "o", label = "high")
-        ax.plot(x3, y3, marker = "o", label = "low")
-        ax.plot(x4, y4, marker = "o", label = "open")
-        ax.legend()
-        plt.show()
+
+        if(opcion == "1"):
+            fig, ax = plt.subplots()
+            ax.plot(x1, y1, label = "Close", color='blue', markersize = 5, marker = '.')
+            ax.plot(x2, y2, label = "High", color='green', markersize = 5, marker = '.')
+            ax.plot(x3, y3, label = "Low", color='red', markersize = 5, marker = '.')
+            ax.plot(x4, y4, label = "Open", color='yellow', markersize = 5, marker = '.')
+            ax.set_xlabel('Fecha')
+            ax.set_ylabel('Valor')
+            ax.grid(True)
+            ax.set_title('Gráfico')
+            ax.legend()
+            plt.show()
+        elif (opcion == "2"):
+            fig, axs = plt.subplots(2,2)
+            axs[0,0].bar(x1,y1, label = "Close", color='blue')
+            axs[0,0].set_title("Close")
+            axs[0,1].bar(x2,y2, label = "High", color='green') 
+            axs[0,1].set_title("High")
+            axs[1,0].bar(x3,y3, label = "Low", color='red')
+            axs[1,0].set_title("Low")
+            axs[1,1].bar(x4,y4, label = "Open", color='yellow') 
+            axs[1,1].set_title("Open")
+            plt.show()
+        else:
+            print("Opcion Incorrecta")
 
     def clear(self):
         os.system('cls')
