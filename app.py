@@ -7,12 +7,14 @@ from datetime import datetime
 
 # Clase App
 class App:
+    # Comentarios
     def __init__(self):
         self.db = BaseDeDatos()
         self.validar_credentials()
         self.api = Api(self.key)
 
-    # verificar si existe credentials.env
+    # Métodos
+    # Método que verifica si existe credentials.env
     def validar_credentials(self):
         if os.path.exists("credentials.env"):
             with open("credentials.env", "r") as archivo:
@@ -24,7 +26,8 @@ class App:
         else:
             self.get_credentials()
             return False
-            
+        
+    # Método que pide al usuario la key de la API y genera el archivo credentials.env
     def get_credentials(self):
         print("No se encuentra configurada la apiKey de polygon.io.")
         self.key = input("Por favor, ingrese su clave de API: ")
@@ -33,6 +36,12 @@ class App:
         print("Archivo credentials.env creado con la clave ingresada.\n")
         os.system("pause")
 
+    # Método main de la app que muestra el menu
+    def main(self):
+        menu = Menu(self)
+        menu.mostrar_menu_principal()
+
+    # Método que consulta los datos necesarios en la API y los guarda en la BD
     def actualizar_datos(self, ticker, fecha_desde, fecha_hasta):
         try:
             self.validar_fechas(fecha_desde, fecha_hasta)
@@ -62,15 +71,18 @@ class App:
                     return False
         except ValueError as e:
             raise     
-
+    
+    # Método que consulta el resumen de todos los tickers guardados en la BD
     def visualizar_resumen(self):
         df = self.db.consultar_resumen()
         return df
 
+    # Método que consulta los datos para visualizar un gráfico en la BD para un ticker determinado
     def visualizar_grafico(self, ticker):
         df = self.db.consultar_datos(ticker)
         return df
     
+    # Método que valida las fechas ingresadas por el usuario
     def validar_fechas(self, fecha_desde, fecha_hasta):
         try:
             try:
@@ -84,7 +96,8 @@ class App:
                 raise ValueError("\n.\n.\nNo se puede colocar una fecha futura")
         except ValueError as e:
             raise
-
+        
+    # Método que genera los rangos necesarios para consultar la API segun una lista de fechas recibida
     def agrupar_fechas(self, fechas):
         rangos = []
         # Ordeno las fechas
@@ -108,10 +121,8 @@ class App:
 
         return rangos
 
+    # Método que consulta la BD para validar si existen datos para un ticker en particular
     def validarTicker(self, ticker):
         return self.db.validar_ticker(ticker)
 
-
-    def main(self):
-        menu = Menu(self)
-        menu.mostrar_menu_principal()
+    

@@ -5,8 +5,8 @@ class Menu:
     def __init__(self, app):
         self.app = app
     
+    # Método que muestra el menú principal de la aplicación
     def mostrar_menu_principal(self):
-        # menu
         while True:
             self.clear()
             print("------------------------------------")
@@ -33,12 +33,13 @@ class Menu:
             elif (opcion == "2"):
                 self.mostrar_menu_visualizacion()
             elif (opcion == "3"):
+                self.app.db.desconectar()
                 break
             else:
                 print("Opcion Incorrecta")
                 os.system("pause")
 
-
+    # Método que muestra el menú de visualización de la aplicación
     def mostrar_menu_visualizacion(self):
         self.clear()
         print("------------------------------------")
@@ -74,6 +75,7 @@ class Menu:
             print("Opcion Incorrecta")
             os.system("pause")
 
+    # Método que dado un dataframe y una opción grafica lo solicitado
     def graficar(self, df, opcion):
         x1 = df["fecha"]
         y1 = df["close"]
@@ -113,5 +115,6 @@ class Menu:
         else:
             print("Opcion Incorrecta")
 
+    # Método que limpia la terminal
     def clear(self):
         os.system('cls')
