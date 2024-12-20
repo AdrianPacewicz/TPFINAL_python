@@ -4,29 +4,54 @@ from menu import Menu
 import pandas as pd
 import os
 from datetime import datetime
+import streamlit as st
 
 # Clase App
 class App:
     # Constructor
     def __init__(self):
         self.db = BaseDeDatos()
-        self.validar_credentials()
-        self.api = Api(self.key)
+        #self.validar_credentials()
+        self.api = None
 
     # Métodos
     # Método que verifica si existe credentials.env
+    def validar_credentials(self, streamlit=None):
+        if os.path.exists("credentials.env"):
+            with open("credentials.env", "r") as archivo:
+                for linea in archivo:
+                    if linea.startswith("apiKey="):
+                        self.key = linea.split('=')[1].strip()
+                        return
+        
+        if streamlit:
+            self.get_credentials_streamlit()
+        else: 
+            self.get_credentials()
+    """
     def validar_credentials(self):
         if os.path.exists("credentials.env"):
             with open("credentials.env", "r") as archivo:
                 for linea in archivo:
                     if linea.startswith("apiKey="):
                         self.key = linea.split('=')[1].strip()
-                        return True
-                return False
+                        return
+        if self.es_streamlit:
+            self.get_credentials_streamlit()
         else:
             self.get_credentials()
-            return False
-        
+    """
+    # Método que pide al usuario la key de la API y genera el archivo credentials.env en streamlit
+    def get_credentials_streamlit(self):
+        st.warning("No se encuentra configurada la apiKey de polygon.io.")
+        self.key = st.text_input("Por favor, ingrese su clave de API:")
+        if self.key:
+            with open("credentials.env", "w") as archivo:
+                archivo.write(f"apiKey={self.key}\n")
+                st.success("Archivo credentials.env creado con la clave ingresada.")
+        else:
+            st.stop() # Detener la ejecución si no se ingresa la clave
+
     # Método que pide al usuario la key de la API y genera el archivo credentials.env
     def get_credentials(self):
         print("No se encuentra configurada la apiKey de polygon.io.")
@@ -70,8 +95,8 @@ class App:
                 else:
                     return False
         except ValueError as e:
-            raise     
-    
+            raise
+
     # Método que consulta el resumen de todos los tickers guardados en la BD
     def visualizar_resumen(self):
         df = self.db.consultar_resumen()
@@ -81,7 +106,7 @@ class App:
     def visualizar_grafico(self, ticker):
         df = self.db.consultar_datos(ticker)
         return df
-    
+
     # Método que valida las fechas ingresadas por el usuario
     def validar_fechas(self, fecha_desde, fecha_hasta):
         try:
@@ -96,7 +121,7 @@ class App:
                 raise ValueError("\n.\n.\nNo se puede colocar una fecha futura")
         except ValueError as e:
             raise
-        
+
     # Método que genera los rangos necesarios para consultar la API segun una lista de fechas recibida
     def agrupar_fechas(self, fechas):
         rangos = []
@@ -124,5 +149,3 @@ class App:
     # Método que consulta la BD para validar si existen datos para un ticker en particular
     def validarTicker(self, ticker):
         return self.db.validar_ticker(ticker)
-
-    
