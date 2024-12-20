@@ -23,5 +23,13 @@ pip install matplotlib==3.9.3
 pip install requests==2.32.3
 ```
 ```
+pip install streamlit==1.41.0
+```
+Ejecutar app en consola:
+```
 python tpfinal.py
+```
+Ejecutar app web en streamlit:
+```
+streamlit run tpfinal_streamlit.py
 ```
